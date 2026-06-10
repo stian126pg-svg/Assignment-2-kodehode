@@ -1,35 +1,16 @@
-﻿// Date/Time Console / Simple Tasklist/Appointment booker
+using System.Globalization;
+using System.Text.Json;
 
+UserProfile user;
 
-// User Profile Class
-public class UserProfile
+// Load existing profile or create one
+if (File.Exists("user.json"))
 {
-    public string Name { get; set; } = "";
-    public string Gender { get; set; } = "";
-    public DateTime DateOfBirth { get; set; }
+    string json = File.ReadAllText("user.json");
+    user = JsonSerializer.Deserialize<UserProfile>(json)!;
 }
-
-// Greeting Lookup Table
-Dictionary<string, string> greetings = new()
+else
 {
-    { "Morning", "Good Morning" },
-    { "Afternoon", "Good Afternoon"},
-    { "Evening", "Good Evening" }
-};
-
-string GetTimePeriod ()
-{
-    int hour = DateTime.Now.Hour;
-
-    if (hour < 12)
-        return "Morning";
-
-    if (hour < 18)
-        return "Afternoon";
-
-    return "Evening";
+    user = CreateProfile();
+    SaveProfile(user);
 }
-
-string period = GetTimePeriod();
-
-Console.WriteLine($"{greetings[period]}, {user.Name}!");
