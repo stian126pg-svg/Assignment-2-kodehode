@@ -17,8 +17,7 @@ else
     SaveProfile(user);
 }
 
-
-// Main Dashboard Loop
+// Main dashboard loop
 while (true)
 {
     DisplayDashboard(user);
@@ -34,7 +33,7 @@ static UserProfile CreateProfile()
     Console.Write("Enter your gender: ");
     string gender = Console.ReadLine() ?? "";
 
-    Console.Write("Enter your date of birth: (yyyy-MM-dd): ");
+    Console.Write("Enter your date of birth (yyyy-MM-dd): ");
     DateTime dob = DateTime.Parse(Console.ReadLine() ?? "");
 
     return new UserProfile
@@ -45,7 +44,6 @@ static UserProfile CreateProfile()
     };
 }
 
-
 static void SaveProfile(UserProfile user)
 {
     string json = JsonSerializer.Serialize(
@@ -54,7 +52,7 @@ static void SaveProfile(UserProfile user)
         {
             WriteIndented = true
         });
-    
+
     File.WriteAllText("user.json", json);
 }
 
@@ -68,7 +66,7 @@ static bool IsBirthday(DateTime birthday)
 
 static string GetGreeting()
 {
-    Directory<string, string> greetings = new()
+    Dictionary<string, string> greetings = new()
     {
         { "Morning", "Good Morning" },
         { "Afternoon", "Good Afternoon" },
@@ -87,4 +85,39 @@ static string GetGreeting()
     return greetings[period];
 }
 
+static void DisplayDashboard(UserProfile user)
+{
+    DateTime now = DateTime.Now;
 
+    Console.SetCursorPosition(0, 0);
+
+    Console.WriteLine("========================================");
+    Console.WriteLine($"{GetGreeting()}, {user.Name}!");
+
+    if (IsBirthday(user.DateOfBirth))
+    {
+        Console.WriteLine("🎉 HAPPY BIRTHDAY! 🎂");
+    }
+    else
+    {
+        Console.WriteLine();
+    }
+
+    Console.WriteLine("========================================");
+
+    Console.WriteLine(
+        $"{now:dddd} | Week {ISOWeek.GetWeekOfYear(now)} | {now:MMMM dd yyyy} | {now:HH:mm:ss}");
+
+    Console.WriteLine(
+        $"Timezone: {TimeZoneInfo.Local.DisplayName}");
+
+    Console.WriteLine();
+    Console.WriteLine("Today's Tasks");
+    Console.WriteLine("----------------------------------------");
+    Console.WriteLine("• Meeting at 14:00");
+    Console.WriteLine("• Buy groceries");
+    Console.WriteLine("• Pay electricity bill");
+
+    Console.WriteLine();
+    Console.WriteLine("Press CTRL+C to quit.");
+}
