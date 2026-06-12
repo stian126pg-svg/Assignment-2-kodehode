@@ -1,55 +1,62 @@
 using System.Text.Json;
 
 
-
 class Program
 {
     static void Main()
     {
-        Console.CursorVisible = false;
+    Console.CursorVisible = false;
 
-        UserProfile user = LoadProfile();
-        List<TaskItem> tasks = LoadTasks();
+    UserProfile user = LoadProfile();
+    List<TaskItem> tasks = LoadTasks();
 
-        Console.Clear();
-        DisplayDashboard(user, tasks);
+    Console.Clear();
+    DisplayDashboard(user, tasks);
+    
+    while (true)
+    {
+        // Live clock in header
+        Console.SetCursorPosition(45, 1);
+        Console.Write($"{DateTime.Now:HH:mm:ss}");
 
-        while (true)
+        if (Console.KeyAvailable)
         {
-            Console.SetCursorPosition(0, 6);
+            ConsoleKey key =
+                Console.ReadKey(true).Key;
 
-            Console.Write(
-                $"{DateTime.Now:HH:mm:ss}");
-
-            if (Console.KeyAvailable)
+            switch (key)
             {
-                ConsoleKey key = Console.ReadKey(true).Key;
+                case ConsoleKey.A:
+                    AddTask(tasks);
 
-                switch (key)
-                {
-                    case ConsoleKey.A:
-                        AddTask(tasks);
-                        Console.Clear();
-                        break;
+                    Console.Clear();
+                    DisplayDashboard(user, tasks);
+                    break;
 
-                    case ConsoleKey.R:
-                        RemoveTask(tasks);
-                        Console.Clear();
-                        break;
+                case ConsoleKey.R:
+                    RemoveTask(tasks);
 
-                    case ConsoleKey.C:
-                        CompleteTask(tasks);
-                        Console.Clear();
-                        break;
+                    Console.Clear();
+                    DisplayDashboard(user, tasks);
+                    break;
 
-                    case ConsoleKey.Escape:
-                        return;
-                }
+                case ConsoleKey.C:
+                    CompleteTask(tasks);
+
+                    Console.Clear();
+                    DisplayDashboard(user, tasks);
+                    break;
+
+                case ConsoleKey.Escape:
+                    Console.Clear();
+                    Console.CursorVisible = true;
+                    return;
             }
-
-            Thread.Sleep(1000);
         }
+
+        Thread.Sleep(1000);
     }
+}
 
 
 // Load User Profile
@@ -264,15 +271,16 @@ class Program
     }
 
 
-// Display Dashboard Loop
+// Display Dashboard
     static void DisplayDashboard(
         UserProfile user,
         List<TaskItem> tasks)
-    {
-        DateTime now = DateTime.Now;
+{
+    Console.SetCursorPosition(0, 0);
+    DateTime now = DateTime.Now;
 
-        Console.WriteLine("====================================================");
-        Console.WriteLine($"{GetGreeting()}, {user.Name}");
+    Console.WriteLine("====================================================");
+    Console.WriteLine($"{GetGreeting()}, {user.Name,-20}");
 
         if (IsBirthday(user.DateOfBirth))
         {
@@ -287,7 +295,6 @@ class Program
 
         Console.WriteLine($"{now:dddd}");
         Console.WriteLine($"{now:dd MMMM yyyy}");
-        Console.WriteLine($"{now:HH:mm:ss}");
 
         Console.WriteLine(
             $"Timezone: {TimeZoneInfo.Local.DisplayName}");
